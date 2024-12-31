@@ -1,19 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { Link, useParams, useHistory } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
-import axios from "axios";
+import axios from 'axios';
 
 const Movie = (props) => {
-  const { addToFavorites } = props;
+  const { addToFavorites, deleteMovie } = props;
 
-  const [movie, setMovie] = useState("");
+  const [movie, setMovie] = useState('');
 
   const { id } = useParams();
-  const { push } = useHistory();
 
   useEffect(() => {
     axios
-      .get(`http://localhost:9000/api/movies/${id}`)
+      .get(`https://nextgen-project.onrender.com/api/s11d3/movies/${id}`)
       .then((res) => {
         setMovie(res.data);
       })
@@ -23,7 +22,7 @@ const Movie = (props) => {
   }, [id]);
 
   return (
-    <div className="bg-white rounded-md shadow flex-1">
+    <div className="bg-white rounded-md shadow flex-1 dark:bg-slate-800 dark:text-white">
       <div className="p-5 pb-3 border-b border-zinc-200">
         <h4 className="text-xl font-bold">{movie.title} Detayları</h4>
       </div>
@@ -51,16 +50,22 @@ const Movie = (props) => {
       </div>
 
       <div className="px-5 py-3 border-t border-zinc-200 flex justify-end gap-2">
-        <button className="myButton bg-blue-600 hover:bg-blue-500 ">
+        <button
+          className="myButton bg-blue-600 hover:bg-blue-500 dark:bg-blue-200 dark:hover:bg-blue-400 dark:text-slate-800"
+          onClick={() => addToFavorites(movie)}
+        >
           Favorilere ekle
         </button>
         <Link
           to={`/movies/edit/${movie.id}`}
-          className="myButton bg-blue-600 hover:bg-blue-500"
+          className="myButton bg-blue-600 hover:bg-blue-500 dark:bg-blue-200 dark:hover:bg-blue-400 dark:text-slate-800"
         >
           Edit
         </Link>
-        <button type="button" className="myButton bg-red-600 hover:bg-red-500">
+        <button
+          className="myButton bg-red-600 hover:bg-red-500 dark:bg-red-200 dark:hover:bg-red-400 dark:text-slate-800"
+          onClick={() => deleteMovie(movie.id)}
+        >
           Sil
         </button>
       </div>

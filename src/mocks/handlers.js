@@ -1,45 +1,39 @@
-import { rest } from 'msw'
-import Data from './data'
-
-function getAll(req, res, ctx) {
-  return res(
-    ctx.status(200),
-    ctx.json(Data.getAll())
-  );
-}
-
-function getById(req, res, ctx) {
-  return res(
-    ctx.status(200),
-    ctx.json(Data.getById(req.params.id))
-  );
-}
-
-function create(req, res, ctx) {
-  return res(
-    ctx.status(200),
-    ctx.json(Data.create(req.body))
-  );
-}
-
-function edit(req, res, ctx) {
-  return res(
-    ctx.status(200),
-    ctx.json(Data.edit(req.params.id, req.body))
-  );
-}
-
-function remove(req, res, ctx) {
-  return res(
-    ctx.status(200),
-    ctx.json(Data.remove(req.params.id))
-  );
-}
+import { http, HttpResponse } from 'msw';
+import { create, getById, getAll, edit, remove } from './data.js';
 
 export const handlers = [
-  rest.get('http://localhost:9000/api/movies', getAll),
-  rest.get('http://localhost:9000/api/movies/:id', getById),
-  rest.post('http://localhost:9000/api/movies', create),
-  rest.put('http://localhost:9000/api/movies/:id', edit),
-  rest.delete('http://localhost:9000/api/movies/:id', remove)
-]
+  http.get(
+    'https://nextgen-project.onrender.com/api/s11d3/movies',
+    ({ request }) => {
+      return HttpResponse.json(getAll());
+    }
+  ),
+  http.get(
+    'https://nextgen-project.onrender.com/api/s11d3/movies/:id',
+    ({ request, params }) => {
+      return HttpResponse.json(getById(params.id));
+    }
+  ),
+  http.put(
+    'https://nextgen-project.onrender.com/api/s11d3/movies/:id',
+    async ({ request, params }) => {
+      const info = await request.json();
+      return HttpResponse.json(edit(params.id, info));
+    }
+  ),
+  http.delete(
+    'https://nextgen-project.onrender.com/api/s11d3/movies/:id',
+    async ({ request, params }) => {
+      return HttpResponse.json(remove(params.id));
+    }
+  ),
+
+  http.post(
+    'https://nextgen-project.onrender.com/api/s11d3/movies',
+    async ({ request }) => {
+      const info = await request.json();
+
+      return HttpResponse.json(create(info));
+    }
+  ),
+];
